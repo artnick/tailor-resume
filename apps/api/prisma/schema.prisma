@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model MasterResume {
+  id        String    @id @default(cuid())
+  basics    Json
+  items     Item[]
+  variants  Variant[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Item {
+  id               String        @id @default(cuid())
+  masterId         String
+  master           MasterResume  @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  section          String
+  parentId         String?
+  parent           Item?         @relation("ItemChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children         Item[]        @relation("ItemChildren")
+  isChoiceGroup    Boolean       @default(false)
+  isDefaultChoice  Boolean       @default(false)
+  pinned           Boolean       @default(false)
+  data             Json
+  order            Int
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  tags             ItemTag[]
+  variantItems     VariantItem[] @relation("OverlayItem")
+  chosenInVariants VariantItem[] @relation("ChosenAlt")
+
+  @@index([masterId])
+  @@index([parentId])
+}
+
+model TagCategory {
+  id        String  @id @default(cuid())
+  key       String  @unique
+  name      String
+  isDefault Boolean @default(false)
+  color     String?
+  tags      Tag[]
+}
+
+model Tag {
+  id          String       @id @default(cuid())
+  label       String
+  categoryId  String
+  category    TagCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  items       ItemTag[]
+  variantTags VariantTag[]
+
+  @@unique([categoryId, label])
+}
+
+model ItemTag {
+  itemId String
+  tagId  String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, tagId])
+  @@index([tagId])
+}
+
+model Variant {
+  id              String        @id @default(cuid())
+  masterId        String
+  master          MasterResume  @relation(fields: [masterId], references: [id], onDelete: Cascade)
+  name            String
+  isFavorite      Boolean       @default(false)
+  templateId      String
+  baseVariantId   String?
+  baseVariant     Variant?      @relation("VariantBase", fields: [baseVariantId], references: [id], onDelete: SetNull)
+  derivedVariants Variant[]     @relation("VariantBase")
+  targetCompany   String?
+  jobDescription  String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  tagSelections   VariantTag[]
+  items           VariantItem[]
+
+  @@index([masterId])
+  @@index([baseVariantId])
+}
+
+model VariantTag {
+  variantId String
+  tagId     String
+  priority  Int
+  variant   Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([variantId, tagId])
+  @@unique([variantId, priority])
+  @@index([tagId])
+}
+
+model VariantItem {
+  variantId           String
+  itemId              String
+  included            Boolean
+  order               Int
+  overrideData        Json?
+  chosenAlternativeId String?
+  locked              Boolean @default(false)
+  variant             Variant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  item                Item    @relation("OverlayItem", fields: [itemId], references: [id], onDelete: Cascade)
+  chosenAlternative   Item?   @relation("ChosenAlt", fields: [chosenAlternativeId], references: [id], onDelete: SetNull)
+
+  @@id([variantId, itemId])
+  @@index([itemId])
+  @@index([chosenAlternativeId])
+}
