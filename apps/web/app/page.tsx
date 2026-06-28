@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 type HealthResponse = {
@@ -5,28 +8,48 @@ type HealthResponse = {
   database: string;
 };
 
-async function fetchHealth(): Promise<
-  { ok: true; data: HealthResponse } | { ok: false; error: string }
-> {
-  const apiUrl = process.env.API_URL ?? "http://localhost:4000";
+type HealthState =
+  | { status: "loading" }
+  | { status: "ok"; data: HealthResponse }
+  | { status: "error"; error: string };
 
-  try {
-    const response = await fetch(`${apiUrl}/health`, { cache: "no-store" });
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
-    if (!response.ok) {
-      return { ok: false, error: `HTTP ${response.status}` };
+export default function Home() {
+  const [health, setHealth] = useState<HealthState>({ status: "loading" });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchHealth() {
+      try {
+        const response = await fetch(`${apiUrl}/health`);
+
+        if (!response.ok) {
+          if (!cancelled) {
+            setHealth({ status: "error", error: `HTTP ${response.status}` });
+          }
+          return;
+        }
+
+        const data = (await response.json()) as HealthResponse;
+        if (!cancelled) {
+          setHealth({ status: "ok", data });
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unknown error";
+        if (!cancelled) {
+          setHealth({ status: "error", error: message });
+        }
+      }
     }
 
-    const data = (await response.json()) as HealthResponse;
-    return { ok: true, data };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error";
-    return { ok: false, error: message };
-  }
-}
+    void fetchHealth();
 
-export default async function Home() {
-  const health = await fetchHealth();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -36,7 +59,9 @@ export default async function Home() {
 
         <section className={styles.statusCard}>
           <h2 className={styles.statusTitle}>API health</h2>
-          {health.ok ? (
+          {health.status === "loading" ? (
+            <p className={styles.statusError}>Loading…</p>
+          ) : health.status === "ok" ? (
             <ul className={styles.statusList}>
               <li>
                 <span
