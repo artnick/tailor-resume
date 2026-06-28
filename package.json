@@ -1,6 +1,5 @@
 {
-  "name": "resume-builder",
-  "private": true,
+  "name": "tailor-resume",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
