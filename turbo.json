@@ -4,7 +4,10 @@
   "tasks": {
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": [
+        "^build"
+      ]
     },
     "build": {
       "env": [
@@ -34,12 +37,12 @@
     },
     "check-types": {
       "dependsOn": [
-        "^check-types"
+        "^build"
       ]
     },
     "test": {
       "dependsOn": [
-        "^test"
+        "^build"
       ]
     }
   }

@@ -80,6 +80,7 @@ export {
   validateMasterResumePut,
   validateVariantOverlay,
   validateVariantPayload,
+  validateVariantPut,
   type ValidationIssue,
 } from './validate-domain.js';
 
@@ -94,6 +95,34 @@ export {
   type VariantPayload,
   type VariantTag,
 } from './domain/variant.js';
+
+export {
+  variantCreateSchema,
+  variantGetSchema,
+  variantListItemSchema,
+  variantPutSchema,
+  wireVariantItemSchema,
+  wireVariantTagSchema,
+  type VariantCreate,
+  type VariantGet,
+  type VariantListItem,
+  type VariantPut,
+  type WireVariantItem,
+  type WireVariantTag,
+} from './domain/variant-wire.js';
+
+export {
+  tagCategoryCreateSchema,
+  tagCategoryPatchSchema,
+  tagCategoryResponseSchema,
+  tagCreateSchema,
+  tagPatchSchema,
+  tagResponseSchema,
+  type TagCategoryCreate,
+  type TagCategoryPatch,
+  type TagCreate,
+  type TagPatch,
+} from './domain/tag-wire.js';
 
 export { mergeOverride } from './merge-override.js';
 
@@ -140,3 +169,8 @@ export {
   type RenderSkillGroup,
   type RenderSummaryBlock,
 } from './domain/render-model.js';
+
+export {
+  exportRequestSchema,
+  type ExportRequest,
+} from './domain/export-wire.js';

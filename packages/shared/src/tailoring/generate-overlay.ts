@@ -17,7 +17,6 @@ export type RegenerateOverlayInput = TailoringContext & {
 export function regenerateOverlay(
   input: RegenerateOverlayInput,
 ): VariantItem[] {
-  console.log('test');
   const freshOverlay = generateOverlay(input);
   const lockedByItemId = new Map(
     input.existingOverlay
