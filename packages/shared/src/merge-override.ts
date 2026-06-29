@@ -1,7 +1,7 @@
-import type { DeepPartial } from "./domain/common.js";
+import type { DeepPartial } from './domain/common.js';
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 export function mergeOverride<T extends Record<string, unknown>>(

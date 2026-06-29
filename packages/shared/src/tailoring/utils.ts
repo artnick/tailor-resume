@@ -1,6 +1,5 @@
-import type { Item } from "../domain/item.js";
-import type { ItemTag } from "../domain/item.js";
-import type { VariantItem } from "../domain/variant.js";
+import type { Item, ItemTag } from '../domain/item.js';
+import type { VariantItem } from '../domain/variant.js';
 
 export const INFINITE_RANK = Number.MAX_SAFE_INTEGER;
 
@@ -77,7 +76,7 @@ export function isOverlayEligible(
 }
 
 export function getParentKey(item: Item): string {
-  return item.parentId ?? "__root__";
+  return item.parentId ?? '__root__';
 }
 
 export function getItemTagIds(

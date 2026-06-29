@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { entityIdSchema, timestampSchema } from "./common.js";
-import { itemSchema, itemTagSchema } from "./item.js";
+import { entityIdSchema, timestampSchema } from './common.js';
+import { itemSchema, itemTagSchema } from './item.js';
 
 export const basicsLocationSchema = z.object({
   city: z.string().optional(),
@@ -15,7 +15,7 @@ export const basicsProfileSchema = z.object({
 });
 
 export const basicsSchema = z.object({
-  name: z.string().min(1),
+  name: z.string(),
   label: z.string().optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),

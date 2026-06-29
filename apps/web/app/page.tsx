@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import styles from "./page.module.css";
+import { useEffect, useState } from 'react';
+import styles from './page.module.css';
 
 type HealthResponse = {
   status: string;
@@ -9,14 +9,14 @@ type HealthResponse = {
 };
 
 type HealthState =
-  | { status: "loading" }
-  | { status: "ok"; data: HealthResponse }
-  | { status: "error"; error: string };
+  | { status: 'loading' }
+  | { status: 'ok'; data: HealthResponse }
+  | { status: 'error'; error: string };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 
 export default function Home() {
-  const [health, setHealth] = useState<HealthState>({ status: "loading" });
+  const [health, setHealth] = useState<HealthState>({ status: 'loading' });
 
   useEffect(() => {
     let cancelled = false;
@@ -27,19 +27,20 @@ export default function Home() {
 
         if (!response.ok) {
           if (!cancelled) {
-            setHealth({ status: "error", error: `HTTP ${response.status}` });
+            setHealth({ status: 'error', error: `HTTP ${response.status}` });
           }
           return;
         }
 
         const data = (await response.json()) as HealthResponse;
         if (!cancelled) {
-          setHealth({ status: "ok", data });
+          setHealth({ status: 'ok', data });
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message =
+          error instanceof Error ? error.message : 'Unknown error';
         if (!cancelled) {
-          setHealth({ status: "error", error: message });
+          setHealth({ status: 'error', error: message });
         }
       }
     }
@@ -59,9 +60,9 @@ export default function Home() {
 
         <section className={styles.statusCard}>
           <h2 className={styles.statusTitle}>API health</h2>
-          {health.status === "loading" ? (
+          {health.status === 'loading' ? (
             <p className={styles.statusError}>Loading…</p>
-          ) : health.status === "ok" ? (
+          ) : health.status === 'ok' ? (
             <ul className={styles.statusList}>
               <li>
                 <span

@@ -1,9 +1,9 @@
-import type { VariantItem } from "../domain/variant.js";
+import type { VariantItem } from '../domain/variant.js';
 import {
   buildTailoringIndexes,
   generateOverlayEntries,
   type TailoringContext,
-} from "./utils.js";
+} from './utils.js';
 
 export function generateOverlay(input: TailoringContext): VariantItem[] {
   const indexes = buildTailoringIndexes(input);
@@ -17,6 +17,7 @@ export type RegenerateOverlayInput = TailoringContext & {
 export function regenerateOverlay(
   input: RegenerateOverlayInput,
 ): VariantItem[] {
+  console.log('test');
   const freshOverlay = generateOverlay(input);
   const lockedByItemId = new Map(
     input.existingOverlay

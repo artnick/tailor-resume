@@ -1,4 +1,4 @@
-import type { VariantItem, VariantTag } from "../domain/variant.js";
+import type { VariantItem, VariantTag } from '../domain/variant.js';
 import {
   buildTailoringIndexes,
   generateOverlayEntries,
@@ -6,7 +6,7 @@ import {
   mergeUnlockedEntry,
   sortSiblingGroup,
   type TailoringContext,
-} from "./utils.js";
+} from './utils.js';
 
 export type AddTagSoftInput = TailoringContext & {
   existingTags: VariantTag[];

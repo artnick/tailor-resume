@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { dateStringSchema, entityIdSchema } from "./common.js";
-import { basicsSchema } from "./master-resume.js";
+import { dateStringSchema, entityIdSchema } from './common.js';
+import { basicsSchema } from './master-resume.js';
 
 export const renderBulletSchema = z.object({
   id: entityIdSchema,

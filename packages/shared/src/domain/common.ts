@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const entityIdSchema = z.string().min(1);
 export type EntityId = z.infer<typeof entityIdSchema>;
 
 export const dateStringSchema = z
   .string()
-  .regex(/^\d{4}-\d{2}(-\d{2})?$/, "Expected YYYY-MM or YYYY-MM-DD");
+  .regex(/^\d{4}-\d{2}(-\d{2})?$/, 'Expected YYYY-MM or YYYY-MM-DD');
 
 export const timestampSchema = z.coerce.date();
 

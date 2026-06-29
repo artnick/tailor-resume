@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { entityIdSchema } from "./common.js";
+import { entityIdSchema } from './common.js';
 
 export const tagCategorySchema = z.object({
   id: entityIdSchema,

@@ -1,14 +1,19 @@
 {
   "name": "@repo/shared",
   "version": "0.0.0",
-  "private": true,
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "type": "module",
   "scripts": {
-    "lint": "eslint . --max-warnings 0",
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "lint": "eslint --fix",
     "check-types": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "dependencies": {
     "zod": "^3.25.76"

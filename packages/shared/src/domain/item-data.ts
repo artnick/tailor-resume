@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { dateStringSchema } from "./common.js";
+import { dateStringSchema } from './common.js';
 
 const experienceFieldsSchema = z.object({
   position: z.string().optional(),

@@ -1,16 +1,16 @@
-import type { Basics } from "./domain/master-resume.js";
-import type { Item } from "./domain/item.js";
+import type { Basics } from './domain/master-resume.js';
+import type { Item } from './domain/item.js';
 import type {
   RenderExperienceEntry,
   RenderModel,
   RenderSkill,
   RenderSkillGroup,
   RenderSummaryBlock,
-} from "./domain/render-model.js";
-import type { Section } from "./domain/section.js";
-import type { SkillGroupData, TextData } from "./domain/item-data.js";
-import type { VariantItem } from "./domain/variant.js";
-import { mergeOverride } from "./merge-override.js";
+} from './domain/render-model.js';
+import type { Section } from './domain/section.js';
+import type { SkillGroupData, TextData } from './domain/item-data.js';
+import type { VariantItem } from './domain/variant.js';
+import { mergeOverride } from './merge-override.js';
 
 export type BuildRenderModelInput = {
   basics: Basics;
@@ -25,12 +25,12 @@ export function buildRenderModel(input: BuildRenderModelInput): RenderModel {
   return {
     basics: input.basics,
     templateId: input.templateId,
-    summary: buildTopLevelSection(context, "summary", buildSummaryBlock),
-    work: buildTopLevelSection(context, "work", buildExperienceEntry),
-    education: buildTopLevelSection(context, "education", buildExperienceEntry),
-    projects: buildTopLevelSection(context, "project", buildExperienceEntry),
-    skillGroups: buildTopLevelSection(context, "skillGroup", buildSkillGroup),
-    skills: buildTopLevelSection(context, "skill", buildSkill),
+    summary: buildTopLevelSection(context, 'summary', buildSummaryBlock),
+    work: buildTopLevelSection(context, 'work', buildExperienceEntry),
+    education: buildTopLevelSection(context, 'education', buildExperienceEntry),
+    projects: buildTopLevelSection(context, 'project', buildExperienceEntry),
+    skillGroups: buildTopLevelSection(context, 'skillGroup', buildSkillGroup),
+    skills: buildTopLevelSection(context, 'skill', buildSkill),
   };
 }
 
@@ -110,8 +110,8 @@ function buildSummaryBlock(
 
   const data = resolveMergedData(item, overlay);
   if (
-    !("text" in data) ||
-    typeof data.text !== "string" ||
+    !('text' in data) ||
+    typeof data.text !== 'string' ||
     data.text.length === 0
   ) {
     return null;
@@ -133,14 +133,14 @@ function buildExperienceEntry(
 
   return {
     id: item.id,
-    company: readOptionalString(data, "company"),
-    name: readOptionalString(data, "name"),
-    position: readOptionalString(data, "position"),
-    startDate: readRequiredString(data, "startDate"),
-    endDate: readNullableString(data, "endDate"),
-    location: readOptionalString(data, "location"),
-    url: readOptionalString(data, "url"),
-    bullets: buildIncludedChildren(context, item.id, "bullet"),
+    company: readOptionalString(data, 'company'),
+    name: readOptionalString(data, 'name'),
+    position: readOptionalString(data, 'position'),
+    startDate: readRequiredString(data, 'startDate'),
+    endDate: readNullableString(data, 'endDate'),
+    location: readOptionalString(data, 'location'),
+    url: readOptionalString(data, 'url'),
+    bullets: buildIncludedChildren(context, item.id, 'bullet'),
   };
 }
 
@@ -158,7 +158,7 @@ function buildSkillGroup(
   return {
     id: item.id,
     name: data.name,
-    skills: buildIncludedChildren(context, item.id, "skill"),
+    skills: buildIncludedChildren(context, item.id, 'skill'),
   };
 }
 
@@ -234,7 +234,7 @@ function readOptionalString(
   key: string,
 ): string | undefined {
   const value = data[key];
-  return typeof value === "string" ? value : undefined;
+  return typeof value === 'string' ? value : undefined;
 }
 
 function readRequiredString(
@@ -242,7 +242,7 @@ function readRequiredString(
   key: string,
 ): string {
   const value = data[key];
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     throw new Error(`Expected "${key}" to be a string`);
   }
 
@@ -258,7 +258,7 @@ function readNullableString(
     return null;
   }
 
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     throw new Error(`Expected "${key}" to be a string or null`);
   }
 

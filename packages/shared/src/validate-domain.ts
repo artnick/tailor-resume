@@ -1,7 +1,9 @@
-import type { Item, ItemTag } from "./domain/item.js";
-import type { MasterResumePayload } from "./domain/master-resume.js";
-import type { VariantItem, VariantPayload } from "./domain/variant.js";
-import { isOverlayEligible } from "./tailoring/utils.js";
+import type { Item, ItemTag } from './domain/item.js';
+import type { MasterResumePut } from './domain/wire.js';
+import type { MasterResumePayload } from './domain/master-resume.js';
+import type { VariantItem, VariantPayload } from './domain/variant.js';
+import { toPersistentItems } from './mappers/master.js';
+import { isOverlayEligible } from './tailoring/utils.js';
 
 export type ValidationIssue = {
   code: string;
@@ -18,7 +20,7 @@ export function validateItems(items: Item[]): ValidationIssue[] {
   for (const item of items) {
     if (item.parentId != null && !itemMap.has(item.parentId)) {
       issues.push({
-        code: "invalid_parent",
+        code: 'invalid_parent',
         message: `Item "${item.id}" references missing parent "${item.parentId}"`,
         itemId: item.id,
         path: `items.${item.id}.parentId`,
@@ -42,7 +44,7 @@ export function validateItems(items: Item[]): ValidationIssue[] {
 
     if (defaultChoices.length !== 1) {
       issues.push({
-        code: "choice_group_default_count",
+        code: 'choice_group_default_count',
         message: `Choice group "${item.id}" must have exactly one default choice, found ${defaultChoices.length}`,
         itemId: item.id,
         path: `items.${item.id}.isChoiceGroup`,
@@ -51,7 +53,7 @@ export function validateItems(items: Item[]): ValidationIssue[] {
 
     if (children.length === 0) {
       issues.push({
-        code: "choice_group_empty",
+        code: 'choice_group_empty',
         message: `Choice group "${item.id}" must have at least one child`,
         itemId: item.id,
         path: `items.${item.id}.isChoiceGroup`,
@@ -62,7 +64,7 @@ export function validateItems(items: Item[]): ValidationIssue[] {
   for (const item of items) {
     if (item.isDefaultChoice && item.parentId == null) {
       issues.push({
-        code: "default_choice_without_parent",
+        code: 'default_choice_without_parent',
         message: `Item "${item.id}" is marked as default choice but has no parent`,
         itemId: item.id,
         path: `items.${item.id}.isDefaultChoice`,
@@ -77,7 +79,7 @@ export function validateItems(items: Item[]): ValidationIssue[] {
     const parent = itemMap.get(item.parentId);
     if (parent != null && !parent.isChoiceGroup) {
       issues.push({
-        code: "default_choice_invalid_parent",
+        code: 'default_choice_invalid_parent',
         message: `Item "${item.id}" is a default choice but parent "${item.parentId}" is not a choice group`,
         itemId: item.id,
         path: `items.${item.id}.isDefaultChoice`,
@@ -98,7 +100,7 @@ export function validateItemTags(
   for (const itemTag of itemTags) {
     if (!itemIds.has(itemTag.itemId)) {
       issues.push({
-        code: "item_tag_unknown_item",
+        code: 'item_tag_unknown_item',
         message: `ItemTag references missing item "${itemTag.itemId}"`,
         itemId: itemTag.itemId,
         path: `itemTags.${itemTag.itemId}:${itemTag.tagId}`,
@@ -120,7 +122,7 @@ export function validateVariantOverlay(
     const item = itemMap.get(entry.itemId);
     if (item == null) {
       issues.push({
-        code: "overlay_unknown_item",
+        code: 'overlay_unknown_item',
         message: `Overlay references missing item "${entry.itemId}"`,
         itemId: entry.itemId,
         path: `overlay.${entry.itemId}`,
@@ -130,7 +132,7 @@ export function validateVariantOverlay(
 
     if (!isOverlayEligible(item, itemMap)) {
       issues.push({
-        code: "overlay_ineligible_item",
+        code: 'overlay_ineligible_item',
         message: `Choice group child "${entry.itemId}" must not have an overlay row`,
         itemId: entry.itemId,
         path: `overlay.${entry.itemId}`,
@@ -148,7 +150,7 @@ export function validateVariantOverlay(
 
     if (!chosenExists) {
       issues.push({
-        code: "overlay_invalid_alternative",
+        code: 'overlay_invalid_alternative',
         message: `Overlay for "${entry.itemId}" references unknown alternative "${entry.chosenAlternativeId}"`,
         itemId: entry.itemId,
         path: `overlay.${entry.itemId}.chosenAlternativeId`,
@@ -157,6 +159,17 @@ export function validateVariantOverlay(
   }
 
   return issues;
+}
+
+export function validateMasterResumePut(
+  payload: MasterResumePut,
+  masterId: string,
+): ValidationIssue[] {
+  const items = toPersistentItems(payload.items, masterId);
+  return [
+    ...validateItems(items),
+    ...validateItemTags(items, payload.itemTags),
+  ];
 }
 
 export function validateMasterResumePayload(
@@ -173,6 +186,16 @@ export function validateVariantPayload(
   payload: VariantPayload,
 ): ValidationIssue[] {
   return validateVariantOverlay(items, payload.items);
+}
+
+export function assertValidMasterResumePut(
+  payload: MasterResumePut,
+  masterId: string,
+): void {
+  const issues = validateMasterResumePut(payload, masterId);
+  if (issues.length > 0) {
+    throw new Error(formatValidationIssues(issues));
+  }
 }
 
 export function assertValidMasterResumePayload(
@@ -195,5 +218,5 @@ export function assertValidVariantPayload(
 }
 
 function formatValidationIssues(issues: ValidationIssue[]): string {
-  return issues.map((issue) => issue.message).join("; ");
+  return issues.map((issue) => issue.message).join('; ');
 }

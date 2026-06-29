@@ -1,13 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { entityIdSchema, timestampSchema } from "./common.js";
+import { entityIdSchema, timestampSchema } from './common.js';
 import {
   educationDataOverrideSchema,
   projectDataOverrideSchema,
   skillGroupDataOverrideSchema,
   textDataOverrideSchema,
   workDataOverrideSchema,
-} from "./item-data.js";
+} from './item-data.js';
 
 export const variantSchema = z.object({
   id: entityIdSchema,
