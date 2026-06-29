@@ -2,6 +2,7 @@ import type { Item, ItemTag } from './domain/item.js';
 import type { MasterResumePut } from './domain/wire.js';
 import type { MasterResumePayload } from './domain/master-resume.js';
 import type { VariantItem, VariantPayload } from './domain/variant.js';
+import type { VariantPut } from './domain/variant-wire.js';
 import { toPersistentItems } from './mappers/master.js';
 import { isOverlayEligible } from './tailoring/utils.js';
 
@@ -186,6 +187,40 @@ export function validateVariantPayload(
   payload: VariantPayload,
 ): ValidationIssue[] {
   return validateVariantOverlay(items, payload.items);
+}
+
+export function validateVariantPut(
+  items: Item[],
+  payload: VariantPut,
+  knownTagIds: Set<string>,
+): ValidationIssue[] {
+  const overlayItems: VariantItem[] = payload.items.map((item) => ({
+    ...item,
+    variantId: 'placeholder',
+  }));
+  const issues = validateVariantOverlay(items, overlayItems);
+
+  const priorities = new Set<number>();
+  for (const tag of payload.tags) {
+    if (!knownTagIds.has(tag.tagId)) {
+      issues.push({
+        code: 'variant_tag_unknown',
+        message: `Variant tag references unknown tag "${tag.tagId}"`,
+        path: `tags.${tag.tagId}`,
+      });
+    }
+
+    if (priorities.has(tag.priority)) {
+      issues.push({
+        code: 'variant_tag_duplicate_priority',
+        message: `Duplicate tag priority ${tag.priority}`,
+        path: `tags.${tag.tagId}.priority`,
+      });
+    }
+    priorities.add(tag.priority);
+  }
+
+  return issues;
 }
 
 export function assertValidMasterResumePut(
