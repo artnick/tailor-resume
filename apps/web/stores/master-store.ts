@@ -1,4 +1,10 @@
-import type { Basics, ItemTag, MasterResumeGet, MasterResumePut, WireItem } from '@repo/shared';
+import type {
+  Basics,
+  ItemTag,
+  MasterResumeGet,
+  MasterResumePut,
+  WireItem,
+} from '@repo/shared';
 import { create } from 'zustand';
 
 type MasterState = {
