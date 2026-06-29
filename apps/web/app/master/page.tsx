@@ -32,6 +32,8 @@ function itemLabel(item: WireItem): string {
 
 export default function MasterPage() {
   const queryClient = useQueryClient();
+  const load = useMasterStore((state) => state.load);
+  const markClean = useMasterStore((state) => state.markClean);
   const store = useMasterStore();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
 
@@ -48,7 +50,7 @@ export default function MasterPage() {
   const saveMutation = useMutation({
     mutationFn: api.putMaster,
     onSuccess: (data) => {
-      store.markClean(data);
+      markClean(data);
       void queryClient.invalidateQueries({ queryKey: ['master'] });
       setSaveMessage('Saved');
       setTimeout(() => setSaveMessage(null), 2000);
@@ -58,9 +60,9 @@ export default function MasterPage() {
 
   useEffect(() => {
     if (masterQuery.data != null) {
-      store.load(masterQuery.data);
+      load(masterQuery.data);
     }
-  }, [masterQuery.data, store]);
+  }, [masterQuery.data, load]);
 
   const topLevelItems = store.items.filter((item) => item.parentId == null);
   const tags = tagsQuery.data ?? [];

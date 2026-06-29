@@ -91,6 +91,8 @@ export default function VariantEditorPage() {
   const params = useParams<{ id: string }>();
   const variantId = params.id;
   const queryClient = useQueryClient();
+  const load = useVariantStore((state) => state.load);
+  const markClean = useVariantStore((state) => state.markClean);
   const store = useVariantStore();
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [showRegenWarning, setShowRegenWarning] = useState(false);
@@ -113,7 +115,7 @@ export default function VariantEditorPage() {
   const saveMutation = useMutation({
     mutationFn: () => api.putVariant(variantId, toVariantPut(store)),
     onSuccess: (data) => {
-      store.markClean(data);
+      markClean(data);
       void queryClient.invalidateQueries({ queryKey: ['variant', variantId] });
       setSaveMessage('Saved');
       setTimeout(() => setSaveMessage(null), 2000);
@@ -123,9 +125,9 @@ export default function VariantEditorPage() {
 
   useEffect(() => {
     if (variantQuery.data != null) {
-      store.load(variantQuery.data);
+      load(variantQuery.data);
     }
-  }, [variantQuery.data, store]);
+  }, [variantQuery.data, load]);
 
   const masterItems = useMemo(() => {
     if (masterQuery.data == null) return [];
